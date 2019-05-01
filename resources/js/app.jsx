@@ -32,13 +32,28 @@ const Group = ({group}) => <div>
 </div>;
 
 const Person = ({person}) => <div>
-	<img style={{height:20, width:20}} src="https://avatars1.githubusercontent.com/u/5345952?s=460&v=4" alt=""/>
+	<img style={{height: 20, width: 20}} src="https://avatars1.githubusercontent.com/u/5345952?s=460&v=4" alt=""/>
 	<strong>{person.name}</strong>
 	<p>{person.role}</p>
 </div>;
 
-const App = () => <div style={{display: "flex", flexDirection: "row"}}>
-	{groups.map(item => <Group group={item}/>)}
-</div>;
+class App extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = { result: [] };
+	};
+
+	componentDidMount() {
+		fetch('/query?query=' + encodeURI("select * from employees"))
+			.then(data => data.json())
+			.then(json => this.setState({result: json}));
+	}
+
+	render() {
+		return <div style={{display: "flex", flexDirection: "row"}}>
+			{this.state.result.map(item => <Group group={item}/>)}
+		</div>
+	}
+}
 
 ReactDOM.render(<App/>, document.getElementById("root"));
